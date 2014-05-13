@@ -194,6 +194,21 @@ Position Position::rotate()
 		swapBoard[len - i - 1] ^= swapBoard[i];
 		swapBoard[i] ^= swapBoard[len - i - 1];
 	}
+    // Now need swap case of character.
+    for( int i = 0; i < len; i++ )
+    {
+        if( isalpha( swapBoard[i] ) )
+        {
+            if( islower( swapBoard[i] ) )
+            {
+                swapBoard[i] = toupper( swapBoard[i] );
+            }
+            else if( isupper( swapBoard[i] ) )
+            {
+                swapBoard[i] = tolower( swapBoard[i] );
+            }
+        }
+    }
 	return Position( swapBoard, -mScore, mBc, mWc, 119 - mEp, 119 - mKp );
 }
 
@@ -262,7 +277,7 @@ Position Position::move( pair<int, int> sMove )
         }
     }
 
-    return Position( board, score, wc, bc, ep, kp );// .rotate();
+    return Position( board, score, wc, bc, ep, kp ).rotate();
 }
 
 int Position::value( pair<int, int> sMove )
@@ -273,7 +288,7 @@ int Position::value( pair<int, int> sMove )
     char q = mBoard[j];
 
     // Actual move
-    int score = pst[p][j] - pst[p][i];
+    int score = pst[toupper(p)][j] - pst[toupper(p)][i];
 
     // Capture
     if( islower( q ) )
@@ -497,8 +512,7 @@ int main()
 			move = parse( input );
 		}
 		pos = pos.move( move );
-        pos = pos.rotate( );
-		// After user move, rotate board and print again
+		// After user move, print rotated board
 		printBoard( pos.rotate().mBoard );
 
         pair<pair<int, int>, int> moveScore = search( pos );
@@ -517,10 +531,6 @@ int main()
 		
         //printf( "CPU Move: %s%s\n", render( 119 - move.first ), render( 119 - move.second ) );
         pos = pos.move( move );
-        pos = pos.rotate( );
-		// Calculate next move using engine
-		// move, score = search( pos )
-		// So on and so forth
 
     }
 
